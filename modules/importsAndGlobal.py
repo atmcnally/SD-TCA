@@ -23,6 +23,9 @@ empty = threading.Semaphore(CAPACITY)
 full = threading.Semaphore(0)
 
 ips = {}
+RACK = 224
+username = "admin"
+base_password = "$iot" + str(RACK) + "-"
 
 def establishReservation(resReq):
     # generate an ID for this reservation

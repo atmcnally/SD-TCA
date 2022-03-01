@@ -9,8 +9,6 @@ import ssl
 import networkx as nx
 import matplotlib
 
-RACK = 224
-
 ips = {
     "sw21-r224" : "10.16.224.21",
     "sw22-r224" : "10.16.224.22",
@@ -18,6 +16,8 @@ ips = {
     "sw24-r224" : "10.16.224.24"
 }
 
+
+RACK = 224
 username = "admin"
 base_password = "$iot" + str(RACK) + "-"
 

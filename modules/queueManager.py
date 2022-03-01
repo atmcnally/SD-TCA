@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from importsAndGlobal import CAPACITY, buffer, in_index, out_index, queue, mutex, empty, full, establishReservation, threading, TCP_IP, TCP_PORT, BUFFER_SIZE, ips
+from importsAndGlobal import CAPACITY, buffer, in_index, out_index, queue, mutex, empty, full, establishReservation, threading, TCP_IP, TCP_PORT, BUFFER_SIZE, ips, RACK, base_password, username
 import json
 import socket
 import time
@@ -22,6 +22,8 @@ class Discoverer(threading.Thread): # Communicate with switches
             ips[data_str] = addr[0]
             print(ips)
             conn.send(data)  # echo
+            if len(ips) == 4:
+                break
         conn.close()
 
 rsrv_success = [
