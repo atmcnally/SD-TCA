@@ -1,0 +1,2 @@
+#!/usr/bin/bash
+./host-controller-comm/discover_host.py 10.16.224.150 5006 24.224.1.2 5001 22.224.1.2 5001 $1 600 tcp

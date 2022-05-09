@@ -39,8 +39,6 @@ def errorChecking(data, message):
     # PORT = resReq.senderPort
     # server_address = (IP, int(PORT))
     # print(server_address)
-    # I don't understand what is happening here, why do we want to bind this address on controller side?
-    # s.bind(server_address)
     print(f"reservation established? : {message}")
     #   if message starts with YES: the reservation could be instantiated
     if message.startswith("YES"):
@@ -265,13 +263,17 @@ def establishReservation(
 
 def consumer(queue, lock):  # Handle queued requests
     # block on empty queue
-    print("consumer starting")
+    print("consumer starting, ready to pull requests from queue")
     while True:
         item = queue.get()
         with lock:
             data = prepareRequest(item)  # Format the request
+            print("")
+            print(60*"=" + f"\nRecieved request {data.id}")
+            print(60*"-")
             message = establishReservation(data)
             errorChecking(data, message)
+            print(60*"-")
         queue.task_done()
 
 
@@ -296,6 +298,10 @@ class SwitchHandler(threading.Thread):  # Communicate with switches
         # connection once, and then send multiple messages through it.
         while 1:
             conn, addr = s.accept()
+            print("")
+            print(60*"=")
+            print("Switch discovery: ")
+            print(60*"-")
             print("Connection address:", addr)
            
             while 1:
@@ -309,7 +315,7 @@ class SwitchHandler(threading.Thread):  # Communicate with switches
                 data_str = data.decode()  # received (switch_name, user_name, eapi_password)
                 data_str = eval(data_str) # eval converts string -> list
                 # Could receive two types of messages 1) and ARP table update message, or 2) a new switch discovery message.
-                print(data_str)
+                #print(data_str)
                 if data_str[1] == "ARP":
                     print("Received ARP update message from", data_str[0])
                     if self.fetchArpTable(data_str[0]):
@@ -367,6 +373,7 @@ class SwitchHandler(threading.Thread):  # Communicate with switches
 
                 conn.send(str.encode(response))  # echo
             print("Connection with switch ended, listening for next connection")
+            print(60*"-")
             conn.close()
 
     def fetchArpTable(self, switch_name):
@@ -469,19 +476,19 @@ class HostManager(threading.Thread):  # Communicate with hosts
 
 # TEST 1
 #   Reservation messages received from hosts are formated as follows in 'data', and parseMsg() should return a correctly configured ReservationRequest object.
-hm = HostManager()
-data = '{"src_ip": "10.16.224.24", "src_port": "5000", "dest_ip": "10.16.224.22", "resv": 10, "dura": 5.0, "protocol": "tcp", "dest_port": "5000", "callback_ip": "1.1.1.1", "callback_port": 4567}'
-data = hm.parseMsg(data)
-data = prepareRequest(data)
-print(
-    "ip access-list acl_rsv_"
-    + str(data.id)
-    + " permit udp "
-    + data.senderIp
-    + " eq "
-    + data.senderPort
-    + " "
-    + data.destIp
-    + " eq "
-    + data.destPort
-)
+#hm = HostManager()
+#data = '{"src_ip": "10.16.224.24", "src_port": "5000", "dest_ip": "10.16.224.22", "resv": 10, "dura": 5.0, "protocol": "tcp", "dest_port": "5000", "callback_ip": "1.1.1.1", "callback_port": 4567}'
+#data = hm.parseMsg(data)
+#data = prepareRequest(data)
+#print(
+    #"ip access-list acl_rsv_"
+    #+ str(data.id)
+    #+ " permit udp "
+    #+ data.senderIp
+    #+ " eq "
+    #+ data.senderPort
+    #+ " "
+    #+ data.destIp
+    #+ " eq "
+    #+ data.destPort
+#)
